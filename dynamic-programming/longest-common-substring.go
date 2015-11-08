@@ -10,7 +10,7 @@ func NewATable(lenP, lenQ int) *ATable {
 	A.best = make([][]string, lenP+1)
 	A.cur = make([][]string, lenP+1)
 
-	for i := 0; i < lenP; i++ {
+	for i := 0; i < lenP+1; i++ {
 		A.best[i] = make([]string, lenQ+1)
 		A.cur[i] = make([]string, lenQ+1)
 	}
