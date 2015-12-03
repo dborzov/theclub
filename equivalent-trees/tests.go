@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"strconv"
 )
 
@@ -38,8 +39,15 @@ func loadBranch(s []byte) (*Tree, error) {
 		return nil, errors.New("Invalid syntax, no comma found")
 	}
 
-	for j := len(s); j > lb; j-- {
-		if s[j] == byte(',') {
+	lev := 0
+	for j := len(s) - 1; j > lb; j-- {
+		if s[j] == byte(')') {
+			lev++
+		}
+		if s[j] == byte('(') {
+			lev--
+		}
+		if s[j] == byte(',') && lev == 1 {
 			rb = j
 			break
 		}
@@ -54,12 +62,12 @@ func loadBranch(s []byte) (*Tree, error) {
 		return nil, errors.New("Cannot recognize the value")
 	}
 
-	left, err := loadBranch(s[lb:rb])
+	left, err := loadBranch(s[lb+1 : rb])
 	if err != nil {
-		return nil, err
+		return &Tree{Value: val}, fmt.Errorf("at parsin %s->%v", s[lb+1:rb], err)
 	}
 
-	right, err := loadBranch(s[rb : len(s)-1])
+	right, err := loadBranch(s[rb+1 : len(s)-1])
 	if err != nil {
 		return nil, err
 	}
